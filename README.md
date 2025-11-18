@@ -1,54 +1,147 @@
-# space-app
+# SpaceTraders Application
 
-This template should help get you started developing with Vue 3 in Vite.
+Application web Vue 3 + TypeScript pour la gestion d'opérations de trading spatial, construite sur l'API SpaceTraders.
 
-## Recommended IDE Setup
+## 🚀 Installation & Setup
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Prérequis
 
-## Recommended Browser Setup
+- Node.js `^20.19.0` ou `>=22.12.0`
+- npm, yarn ou pnpm
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+### Installation
 
-## Type Support for `.vue` Imports in TS
+```bash
+# Cloner le repository
+git clone <repository-url>
+cd space-app
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+# Installer les dépendances
 npm install
+
+# Configurer les variables d'environnement
+cp .env.example .env
 ```
 
-### Compile and Hot-Reload for Development
+### Configuration
 
-```sh
-npm run dev
+Créer un fichier `.env` à la racine du projet :
+
+```bash
+cp .env.example .env
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
+```bash
+VITE_API_BASE_URL=https://api.spacetraders.io/v2
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Lancer le projet
 
-```sh
-npm run test:unit
+```bash
+# Démarrer le serveur de développement
+npm run app:dev
+
+# L'application sera accessible sur http://localhost:9000
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## 📜 Scripts disponibles
 
-```sh
-npm run lint
+| Script            | Commande              | Description                            |
+| ----------------- | --------------------- | -------------------------------------- |
+| **Développement** | `npm run app:dev`     | Lance le serveur de développement Vite |
+| **Build**         | `npm run app:build`   | Build de production (avec type-check)  |
+| **Preview**       | `npm run app:preview` | Prévisualise le build de production    |
+| **Tests**         | `npm run test`        | Lance les tests unitaires Vitest       |
+| **Type-check**    | `npm run type-check`  | Vérification TypeScript avec vue-tsc   |
+
+## 🏗️ Architecture
+
+### Technologies
+
+- **Vue 3.5** - Framework JavaScript avec Composition API
+- **TypeScript 5.9** - Typage statique
+- **Vite 7.1** - Build tool et dev server
+- **PrimeVue 4.4** - Composants UI (thème Aura)
+- **Pinia 3.0** - State management
+- **Vue Router 4.6** - Routing client-side
+- **Axios 1.13** - Client HTTP
+- **Vitest 3.2** - Tests unitaires
+
+### Structure du projet
+
 ```
+src/
+├── api/                    # Configuration Axios (interceptors)
+├── assets/                 # Images et styles globaux
+├── components/             # Composants réutilisables
+│   └── app-headbar/       # Header de navigation
+├── composables/            # Composables partagés (pagination)
+├── managers/               # Managers (TokenManager)
+├── pages/                  # Pages de l'application
+│   ├── agent/             # Détails agent
+│   ├── fleet/             # Gestion flotte
+│   ├── home/              # Dashboard
+│   ├── login/             # Authentification
+│   ├── markets/           # Trading & marchés
+│   └── systems/           # Exploration systèmes
+├── router/                 # Configuration Vue Router
+│   └── guards/            # Guards d'authentification
+├── services/               # Couche service API
+│   ├── auth/              # Service authentification
+│   ├── fleet/             # Service flotte
+│   ├── markets/           # Service marchés
+│   └── systems/           # Service systèmes
+├── stores/                 # Stores Pinia
+│   ├── agent.store.ts     # État agent
+│   └── auth.store.ts      # État authentification
+└── types/                  # Définitions TypeScript
+```
+
+### Organisation du code
+
+- **Pages** : Composants de page organisés par feature
+- **Services** : Abstraction de l'API SpaceTraders
+- **Stores** : State management avec Pinia (auth, agent)
+- **Guards** : Protection des routes (authentification)
+- **Composables** : Logique réutilisable (pagination, data fetching)
+- **Types** : Interfaces TypeScript pour typage fort
+
+### Flux d'authentification
+
+1. Connexion avec token SpaceTraders
+2. Token stocké via TokenManager (localStorage)
+3. Intercepteurs Axios ajoutent le token aux requêtes
+4. Guard d'authentification protège les routes privées
+5. Auto-déconnexion en cas de token invalide (401)
+
+## 🔧 Développement
+
+### IDE recommandé
+
+- VS Code + Extension Vue (Volar)
+- Extensions : ESLint, Prettier, Volar
+
+### Workflow de développement
+
+1. Créer une branche feature
+2. Développer avec hot-reload (`npm run app:dev`)
+3. Lancer les tests (`npm run test`)
+4. Vérifier les types (`npm run type-check`)
+5. Commit et push
+
+## 🚢 Déploiement
+
+Le projet utilise GitHub Actions pour le déploiement automatique sur Vercel :
+
+- Push sur `develop` → Déploiement production
+- Pull Request → Déploiement preview
+
+### Variables requises (GitHub Secrets)
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+## 👤 Author
+
+**Soufiane YOUSFI MGHARI**
