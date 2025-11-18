@@ -1,0 +1,22 @@
+/*---------------------- Fonts ----------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
+
+/*---------------------- Variables ----------------------*/
+
+:root {
+  /* FONT */
+  --font-jost: 'Jost', sans-serif;
+}
+
+/*---------------------- All content ----------------------*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-jost);
+  height: 100vh;
+}
