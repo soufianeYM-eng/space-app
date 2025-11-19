@@ -8,7 +8,14 @@ export function useSystems() {
       return await SystemsService.getSystems(page, limit)
     } catch (error) {
       console.error('Failed to load systems:', error)
-      throw error
+      return {
+        data: [],
+        meta: {
+          total: 0,
+          page,
+          limit,
+        },
+      }
     }
   }
 

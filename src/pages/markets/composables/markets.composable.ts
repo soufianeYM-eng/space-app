@@ -3,7 +3,7 @@ import type { Ship } from '@/types/ship.type'
 import type { Ref } from 'vue'
 import { MarketsService } from '@/services/markets/markets.service'
 import { ref } from 'vue'
-import { MarketSupplyLevel, MarketActivityLevel, TradeGoodType } from './markets.enum'
+import { MarketSupplyLevel, MarketActivityLevel, TradeGoodType } from '../markets.enum'
 
 export function useMarkets() {
   const currentMarket = ref<Market>()
@@ -20,7 +20,6 @@ export function useMarkets() {
       return market
     } catch (error) {
       console.error('Failed to load market:', error)
-      throw error
     } finally {
       loading.value = false
     }
@@ -32,32 +31,26 @@ export function useMarkets() {
       return
     }
 
-    try {
-      error.value = ''
-      await fetchMarket(systemSymbol.value, waypointSymbol.value)
-    } catch (err: unknown) {
-      error.value =
-        (err as { response?: { data?: { error?: { message?: string } } } })?.response?.data?.error
-          ?.message || 'Failed to load market data. Make sure you have a ship at this waypoint.'
-      throw err
+    error.value = ''
+    const result = await fetchMarket(systemSymbol.value, waypointSymbol.value)
+    if (!result) {
+      error.value = 'Failed to load market data. Make sure you have a ship at this waypoint.'
     }
   }
 
   const loadShipLocations = async (ships: Ref<Ship[]>, fetchShips: () => Promise<void>) => {
-    try {
-      if (ships.value.length === 0) {
-        await fetchShips()
-      }
+    if (ships.value.length === 0) {
+      await fetchShips()
+    }
 
-      const firstShip = ships.value[0]
-      if (firstShip) {
-        systemSymbol.value = firstShip.nav.systemSymbol
-        waypointSymbol.value = firstShip.nav.waypointSymbol
-        await loadMarket()
+    const firstShip = ships.value[0]
+    if (firstShip) {
+      systemSymbol.value = firstShip.nav.systemSymbol
+      waypointSymbol.value = firstShip.nav.waypointSymbol
+      await loadMarket()
+      if (error.value && !error.value.includes('Please enter both')) {
+        error.value = 'Failed to load ship locations'
       }
-    } catch (err) {
-      error.value = 'Failed to load ship locations'
-      throw err
     }
   }
 

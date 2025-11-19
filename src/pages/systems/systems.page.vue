@@ -82,7 +82,7 @@ import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import type { DataTablePageEvent } from 'primevue/datatable'
-import { useSystems } from './systems.composable'
+import { useSystems } from './composables/systems.composable'
 
 const { systems, loading, meta, fetchSystems } = useSystems()
 

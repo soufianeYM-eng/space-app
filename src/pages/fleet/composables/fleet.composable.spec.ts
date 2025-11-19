@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { useFleet } from './fleet.composable'
+import { useFleet } from '../composables/fleet.composable'
 import { FleetService } from '@/services/fleet/fleet.service'
 import { getShipsResponseMock } from '@/__mocks__/ship.mock'
 
@@ -78,13 +78,17 @@ describe('useFleet', () => {
     })
 
     it('should handle fetch error and set loading to false', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const error = new Error('Failed to fetch ships')
       vi.mocked(FleetService.getMyShips).mockRejectedValue(error)
 
       const { loading, fetchShips } = useFleet()
 
-      await expect(fetchShips()).rejects.toThrow('Failed to fetch ships')
+      await fetchShips()
       expect(loading.value).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to load ships:', error)
+
+      consoleSpy.mockRestore()
     })
 
     it('should log error when fetch fails', async () => {
@@ -94,7 +98,7 @@ describe('useFleet', () => {
 
       const { fetchShips } = useFleet()
 
-      await expect(fetchShips()).rejects.toThrow('Network error')
+      await fetchShips()
       expect(consoleSpy).toHaveBeenCalledWith('Failed to load ships:', error)
 
       consoleSpy.mockRestore()

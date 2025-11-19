@@ -100,7 +100,7 @@ import ProgressBar from 'primevue/progressbar'
 import type { Ship } from '@/types/ship.type'
 import type { DataTablePageEvent } from 'primevue/datatable'
 import { ShipNavigationStatus } from './fleet.enum'
-import { useFleet } from './fleet.composable'
+import { useFleet } from './composables/fleet.composable'
 
 const { ships, loading, meta, fetchShips } = useFleet()
 

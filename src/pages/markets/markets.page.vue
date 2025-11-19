@@ -154,8 +154,7 @@
               <Column header="Margin" style="min-width: 100px">
                 <template #body="slotProps">
                   <span class="font-semibold">
-                    {{ ((slotProps.data.sellPrice - slotProps.data.purchasePrice) / slotProps.data.purchasePrice *
-                    100).toFixed(1) }}%
+                    {{ calculateProfitMargin(slotProps.data.sellPrice, slotProps.data.purchasePrice) }}%
                   </span>
                 </template>
               </Column>
@@ -176,8 +175,9 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Message from 'primevue/message'
 import InputText from 'primevue/inputtext'
-import { useMarkets } from './markets.composable'
-import { useFleet } from '../fleet/fleet.composable'
+import { useMarkets } from './composables/markets.composable'
+import { useFleet } from '../fleet/composables/fleet.composable'
+import { calculateProfitMargin } from './utils/markets.utils'
 
 const {
   currentMarket,

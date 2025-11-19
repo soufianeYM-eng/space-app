@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { useSystems } from './systems.composable'
+import { useSystems } from '../composables/systems.composable'
 import { SystemsService } from '@/services/systems/systems.service'
 import { getSystemsResponseMock } from '@/__mocks__/system.mock'
 
@@ -78,13 +78,17 @@ describe('useSystems', () => {
     })
 
     it('should handle fetch error and set loading to false', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const error = new Error('Failed to fetch systems')
       vi.mocked(SystemsService.getSystems).mockRejectedValue(error)
 
       const { loading, fetchSystems } = useSystems()
 
-      await expect(fetchSystems()).rejects.toThrow('Failed to fetch systems')
+      await fetchSystems()
       expect(loading.value).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to load systems:', error)
+
+      consoleSpy.mockRestore()
     })
 
     it('should log error when fetch fails', async () => {
@@ -94,7 +98,7 @@ describe('useSystems', () => {
 
       const { fetchSystems } = useSystems()
 
-      await expect(fetchSystems()).rejects.toThrow('Network error')
+      await fetchSystems()
       expect(consoleSpy).toHaveBeenCalledWith('Failed to load systems:', error)
 
       consoleSpy.mockRestore()

@@ -20,7 +20,7 @@ export function usePagination<T>(
       data.value = response.data
       meta.value = response.meta
     } catch (error) {
-      throw error
+      console.error('Failed to fetch paginated data:', error)
     } finally {
       loading.value = false
     }

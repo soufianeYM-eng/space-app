@@ -8,7 +8,14 @@ export function useFleet() {
       return await FleetService.getMyShips(page, limit)
     } catch (error) {
       console.error('Failed to load ships:', error)
-      throw error
+      return {
+        data: [],
+        meta: {
+          total: 0,
+          page,
+          limit,
+        },
+      }
     }
   }
 

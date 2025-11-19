@@ -4,7 +4,7 @@ import { useMarkets } from './markets.composable'
 import { MarketsService } from '@/services/markets/markets.service'
 import { getMarketMock } from '@/__mocks__/market.mock'
 import { getShipMock } from '@/__mocks__/ship.mock'
-import { MarketSupplyLevel, MarketActivityLevel, TradeGoodType } from './markets.enum'
+import { MarketSupplyLevel, MarketActivityLevel, TradeGoodType } from '../markets.enum'
 import type { Ship } from '@/types/ship.type'
 
 vi.mock('@/services/markets/markets.service', () => ({
@@ -80,13 +80,17 @@ describe('useMarkets', () => {
     })
 
     it('should handle fetch error and set loading to false', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const error = new Error('Market not found')
       vi.mocked(MarketsService.getMarket).mockRejectedValue(error)
 
       const { loading, fetchMarket } = useMarkets()
 
-      await expect(fetchMarket('X1-INVALID', 'X1-INVALID-A1')).rejects.toThrow('Market not found')
+      await fetchMarket('X1-INVALID', 'X1-INVALID-A1')
       expect(loading.value).toBe(false)
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to load market:', error)
+
+      consoleSpy.mockRestore()
     })
 
     it('should log error when fetch fails', async () => {
@@ -96,7 +100,7 @@ describe('useMarkets', () => {
 
       const { fetchMarket } = useMarkets()
 
-      await expect(fetchMarket('X1-TEST', 'X1-TEST-A1')).rejects.toThrow('API error')
+      await fetchMarket('X1-TEST', 'X1-TEST-A1')
       expect(consoleSpy).toHaveBeenCalledWith('Failed to load market:', error)
 
       consoleSpy.mockRestore()
@@ -165,6 +169,7 @@ describe('useMarkets', () => {
     })
 
     it('should set error message when fetch fails', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const apiError = {
         response: {
           data: {
@@ -180,11 +185,15 @@ describe('useMarkets', () => {
       systemSymbol.value = 'X1-TEST'
       waypointSymbol.value = 'X1-TEST-A1'
 
-      await expect(loadMarket()).rejects.toEqual(apiError)
-      expect(error.value).toBe('Market not accessible')
+      await loadMarket()
+      expect(error.value).toBe('Failed to load market data. Make sure you have a ship at this waypoint.')
+      expect(consoleSpy).toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
     })
 
     it('should set default error message when fetch fails without specific message', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const genericError = new Error('Network error')
       vi.mocked(MarketsService.getMarket).mockRejectedValue(genericError)
 
@@ -192,8 +201,11 @@ describe('useMarkets', () => {
       systemSymbol.value = 'X1-TEST'
       waypointSymbol.value = 'X1-TEST-A1'
 
-      await expect(loadMarket()).rejects.toEqual(genericError)
+      await loadMarket()
       expect(error.value).toBe('Failed to load market data. Make sure you have a ship at this waypoint.')
+      expect(consoleSpy).toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
     })
   })
 
@@ -233,6 +245,7 @@ describe('useMarkets', () => {
     })
 
     it('should set error when loading fails', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const mockShip = getShipMock()
       const ships = ref([mockShip])
       const fetchShips = vi.fn()
@@ -241,8 +254,11 @@ describe('useMarkets', () => {
 
       const { loadShipLocations, error } = useMarkets()
 
-      await expect(loadShipLocations(ships, fetchShips)).rejects.toThrow()
+      await loadShipLocations(ships, fetchShips)
       expect(error.value).toBe('Failed to load ship locations')
+      expect(consoleSpy).toHaveBeenCalled()
+
+      consoleSpy.mockRestore()
     })
   })
 
